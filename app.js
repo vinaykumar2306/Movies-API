@@ -25,13 +25,25 @@ const initializeDBAndServer = async () => {
 }
 initializeDBAndServer()
 
+const convertDBtoResponse = dbObject => {
+  return {
+    movieId: dbObject.movie_id,
+    directorId: dbObject.director_id,
+    movieName: dbObject.movie_name,
+    leadActor: dbObject.lead_actor,
+    directorName: dbObject.director_name,
+  }
+}
+
 //GET Movies API
 
 app.get('/movies/', async (request, response) => {
   const getMovies = `SELECT movie_name
     FROM movie;`
   const moviesResponse = await db.all(getMovies)
-  response.send(moviesResponse)
+  response.send(
+    moviesResponse.map(each_movie => convertDBtoResponse(each_movie)),
+  )
 })
 
 //POST movie API
@@ -58,7 +70,7 @@ app.get('/movies/:movieId/', async (request, response) => {
   SELECT * FROM movie 
   WHERE movie_id = ${movieId}`
   const getMovieResponse = await db.get(getMovie)
-  response.send(getMovieResponse)
+  response.send(convertDBtoResponse(getMovieResponse))
 })
 
 //update MOVIE API
@@ -93,10 +105,11 @@ app.delete('/movies/:movieId/', async (request, response) => {
 
 app.get('/directors/', async (request, response) => {
   const getDirectors = `
-  SELECT * FROM director
-  ORDER BY director_id;`
+  SELECT * FROM director;`
   const directorResponse = await db.all(getDirectors)
-  response.send(directorResponse)
+  response.send(
+    directorResponse.map((each_director) => convertDBtoResponse(each_director))
+  )
 })
 
 //GET all Movies by a SPecific Director API
@@ -107,7 +120,7 @@ app.get('/directors/:directorId/movies/', async (request, response) => {
   SELECT movie_name FROM movie
   WHERE director_id = ${directorId};`
   const allMovies = await db.all(listOfMovies)
-  response.send(allMovies)
+  response.send(allMovies.map(movie => convertDBtoResponse(movie)))
 })
 
 module.exports = app

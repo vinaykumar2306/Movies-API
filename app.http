@@ -13,7 +13,7 @@ Content-Type: application/json
 
 ###
 
-GET http://localhost:3000/movies/:movieId/
+GET http://localhost:3000/movies/46/
 
 ###
 
@@ -36,4 +36,4 @@ GET http://localhost:3000/directors/
 
 ###
 
-GET http://localhost:3000/directors/:directorId/movies/
+GET http://localhost:3000/directors/24/movies/
